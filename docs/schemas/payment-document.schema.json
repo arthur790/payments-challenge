@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/payment-document.schema.json",
+  "title": "PaymentDocument",
+  "description": "Documento almacenado en la colección MongoDB `payments` (campo _id mapeado desde `id` en la aplicación).",
+  "type": "object",
+  "required": [
+    "_id",
+    "concepto",
+    "cantidadProductos",
+    "pagador",
+    "beneficiario",
+    "montoTotal",
+    "estatus",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "_id": {
+      "type": "string",
+      "description": "Identificador del documento (ObjectId en BSON, expuesto como string en la API REST)."
+    },
+    "concepto": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cantidadProductos": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pagador": {
+      "type": "string",
+      "minLength": 1
+    },
+    "beneficiario": {
+      "type": "string",
+      "minLength": 1
+    },
+    "montoTotal": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "estatus": {
+      "type": "string",
+      "enum": ["PENDIENTE", "COMPLETADO", "CANCELADO", "FALLIDO"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": true
+}

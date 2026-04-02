@@ -1,0 +1,95 @@
+{
+  "info": {
+    "name": "Payments API",
+    "description": "API de pagos (Spring Boot + MongoDB + RabbitMQ)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "paymentId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Create payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+              "var j = pm.response.json();",
+              "if (j.id) { pm.collectionVariables.set(\"paymentId\", j.id); }"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"concepto\": \"Pedido demo\",\n  \"cantidadProductos\": 2,\n  \"pagador\": \"Cliente Uno\",\n  \"beneficiario\": \"Comercio XYZ\",\n  \"montoTotal\": 150.75,\n  \"estatus\": \"PENDIENTE\"\n}"
+        },
+        "url": "{{baseUrl}}/api/payments"
+      }
+    },
+    {
+      "name": "Get payment by id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/payments/{{paymentId}}"
+      }
+    },
+    {
+      "name": "Update payment status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estatus\": \"COMPLETADO\"\n}"
+        },
+        "url": "{{baseUrl}}/api/payments/{{paymentId}}/status"
+      }
+    }
+  ]
+}
