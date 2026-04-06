@@ -1,14 +1,16 @@
 package com.bancobase.payments.payment.controller;
 
-import com.bancobase.payments.payment.PaymentStatus;
+import com.bancobase.payments.payment.model.PaymentStatus;
 import com.bancobase.payments.payment.dto.CreatePaymentRequest;
 import com.bancobase.payments.payment.dto.PaymentResponse;
 import com.bancobase.payments.payment.dto.UpdatePaymentStatusRequest;
 import com.bancobase.payments.payment.service.PaymentService;
+import com.bancobase.payments.web.RestExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -26,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PaymentController.class)
+@Import(RestExceptionHandler.class)
 class PaymentControllerTest {
 
     @Autowired
@@ -108,5 +112,50 @@ class PaymentControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estatus").value("CANCELADO"));
+    }
+
+    @Test
+    void post_invalidEnumStatus_returnsProblemDetailWithErrors() throws Exception {
+        String body = """
+                {
+                  "concepto": "Pedido",
+                  "cantidadProductos": 1,
+                  "pagador": "A",
+                  "beneficiario": "B",
+                  "montoTotal": 10.00,
+                  "estatus": "PENDIENTE2"
+                }
+                """;
+
+        mockMvc.perform(post("/api/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title").value("Invalid request body"))
+                .andExpect(jsonPath("$.errors[0].field").value("estatus"))
+                .andExpect(jsonPath("$.errors[0].message").value(containsString("Allowed values")));
+    }
+
+    @Test
+    void post_blankConcepto_returnsFieldValidationErrors() throws Exception {
+        String body = """
+                {
+                  "concepto": "",
+                  "cantidadProductos": 1,
+                  "pagador": "A",
+                  "beneficiario": "B",
+                  "montoTotal": 10.00,
+                  "estatus": "PENDIENTE"
+                }
+                """;
+
+        mockMvc.perform(post("/api/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.errors[0].field").value("concepto"));
     }
 }

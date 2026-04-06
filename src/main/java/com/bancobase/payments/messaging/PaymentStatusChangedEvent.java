@@ -1,6 +1,6 @@
 package com.bancobase.payments.messaging;
 
-import com.bancobase.payments.payment.PaymentStatus;
+import com.bancobase.payments.payment.model.PaymentStatus;
 
 import java.time.Instant;
 

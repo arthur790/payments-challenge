@@ -2,9 +2,9 @@ package com.bancobase.payments.payment.service;
 
 import com.bancobase.payments.messaging.PaymentStatusChangedEvent;
 import com.bancobase.payments.messaging.PaymentStatusEventPublisher;
-import com.bancobase.payments.payment.Payment;
-import com.bancobase.payments.payment.PaymentNotFoundException;
-import com.bancobase.payments.payment.PaymentStatus;
+import com.bancobase.payments.payment.exception.PaymentNotFoundException;
+import com.bancobase.payments.payment.model.Payment;
+import com.bancobase.payments.payment.model.PaymentStatus;
 import com.bancobase.payments.payment.dto.CreatePaymentRequest;
 import com.bancobase.payments.payment.dto.PaymentResponse;
 import com.bancobase.payments.payment.dto.UpdatePaymentStatusRequest;
@@ -27,16 +27,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponse create(CreatePaymentRequest request) {
         Instant now = Instant.now();
-        Payment p = new Payment();
-        p.setConcepto(request.concepto());
-        p.setCantidadProductos(request.cantidadProductos());
-        p.setPagador(request.pagador());
-        p.setBeneficiario(request.beneficiario());
-        p.setMontoTotal(request.montoTotal());
-        p.setEstatus(request.estatus());
-        p.setCreatedAt(now);
-        p.setUpdatedAt(now);
-        return PaymentResponse.from(paymentRepository.save(p));
+        Payment payment = new Payment();
+        payment.setConcepto(request.concepto());
+        payment.setCantidadProductos(request.cantidadProductos());
+        payment.setPagador(request.pagador());
+        payment.setBeneficiario(request.beneficiario());
+        payment.setMontoTotal(request.montoTotal());
+        payment.setEstatus(request.estatus());
+        payment.setCreatedAt(now);
+        payment.setUpdatedAt(now);
+        return PaymentResponse.from(paymentRepository.save(payment));
     }
 
     @Override
@@ -48,16 +48,16 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse updateStatus(String id, UpdatePaymentStatusRequest request) {
-        Payment p = paymentRepository.findById(id)
+        Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new PaymentNotFoundException(id));
-        PaymentStatus previous = p.getEstatus();
+        PaymentStatus previous = payment.getEstatus();
         PaymentStatus next = request.estatus();
         if (previous == next) {
-            return PaymentResponse.from(p);
+            return PaymentResponse.from(payment);
         }
-        p.setEstatus(next);
-        p.setUpdatedAt(Instant.now());
-        Payment saved = paymentRepository.save(p);
+        payment.setEstatus(next);
+        payment.setUpdatedAt(Instant.now());
+        Payment saved = paymentRepository.save(payment);
         eventPublisher.publish(new PaymentStatusChangedEvent(
                 saved.getId(),
                 previous,

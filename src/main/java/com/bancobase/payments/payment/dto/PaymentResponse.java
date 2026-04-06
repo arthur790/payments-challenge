@@ -1,7 +1,7 @@
 package com.bancobase.payments.payment.dto;
 
-import com.bancobase.payments.payment.Payment;
-import com.bancobase.payments.payment.PaymentStatus;
+import com.bancobase.payments.payment.model.Payment;
+import com.bancobase.payments.payment.model.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;

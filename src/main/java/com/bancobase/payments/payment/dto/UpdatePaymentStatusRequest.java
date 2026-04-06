@@ -1,6 +1,6 @@
 package com.bancobase.payments.payment.dto;
 
-import com.bancobase.payments.payment.PaymentStatus;
+import com.bancobase.payments.payment.model.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdatePaymentStatusRequest(@NotNull PaymentStatus estatus) {

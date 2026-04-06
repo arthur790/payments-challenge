@@ -2,9 +2,9 @@ package com.bancobase.payments.payment.service;
 
 import com.bancobase.payments.messaging.PaymentStatusChangedEvent;
 import com.bancobase.payments.messaging.PaymentStatusEventPublisher;
-import com.bancobase.payments.payment.Payment;
-import com.bancobase.payments.payment.PaymentNotFoundException;
-import com.bancobase.payments.payment.PaymentStatus;
+import com.bancobase.payments.payment.exception.PaymentNotFoundException;
+import com.bancobase.payments.payment.model.Payment;
+import com.bancobase.payments.payment.model.PaymentStatus;
 import com.bancobase.payments.payment.dto.CreatePaymentRequest;
 import com.bancobase.payments.payment.dto.UpdatePaymentStatusRequest;
 import com.bancobase.payments.payment.repository.PaymentRepository;

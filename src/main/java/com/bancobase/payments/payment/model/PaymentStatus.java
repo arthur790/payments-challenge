@@ -1,4 +1,4 @@
-package com.bancobase.payments.payment;
+package com.bancobase.payments.payment.model;
 
 public enum PaymentStatus {
     PENDIENTE,

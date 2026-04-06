@@ -2,7 +2,7 @@
 
 Servicio REST con Spring Boot 3.2, MongoDB y RabbitMQ: alta de pagos, consulta y cambio de estatus con publicación de eventos a un exchange fanout para múltiples consumers.
 
-Paquete base: `com.bancobase.payments` (aplicación en la raíz; dominio en `payment` con `controller`, `service`, `repository`, `dto`).
+Paquete base: `com.bancobase.payments` (aplicación en la raíz; dominio en `payment` con `controller`, `service`, `repository`, `dto`, `model`, `exception`).
 
 ## Requisitos
 
@@ -39,6 +39,15 @@ La API queda en `http://localhost:8080`. RabbitMQ Management: `http://localhost:
 | POST | `/api/payments` | Alta de pago (JSON con concepto, cantidadProductos, pagador, beneficiario, montoTotal, estatus). |
 | GET | `/api/payments/{id}` | Consulta del pago (incluye estatus). |
 | PATCH | `/api/payments/{id}/status` | Cambio de estatus (`{ "estatus": "COMPLETADO" }`). Si cambia, se publica evento en RabbitMQ. |
+
+## Errores (RFC 7807)
+
+Las respuestas de error usan **`application/problem+json`** (`ProblemDetail`) con:
+
+- `type`, `title`, `status`, `detail`, `instance`
+- **`errors`**: lista de `{ "field", "message", "rejectedValue" }` para validación Bean Validation, JSON inválido / enum incorrecto (`HttpMessageNotReadableException`), parámetros faltantes o tipos incorrectos, y `ConstraintViolationException`.
+
+Los **404** por pago inexistente incluyen el mismo formato con `errors` vacío.
 
 ## Entregables en el repositorio
 

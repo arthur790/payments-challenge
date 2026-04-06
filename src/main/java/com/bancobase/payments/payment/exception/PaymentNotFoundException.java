@@ -1,4 +1,4 @@
-package com.bancobase.payments.payment;
+package com.bancobase.payments.payment.exception;
 
 public class PaymentNotFoundException extends RuntimeException {
 

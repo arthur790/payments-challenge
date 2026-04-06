@@ -1,4 +1,4 @@
-package com.bancobase.payments.payment;
+package com.bancobase.payments.payment.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
